@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    environment {
+        NODEJS_HOME = tool name: 'nodejs', type: 'NodeJSInstallation'
+        PATH = "${env.NODEJS_HOME}/bin:${env.PATH}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch:'main' ,credentialsId: '607bc2c7-089e-423a-88ad-7b97cf3f9574' ,url:'https://github.com/TaxDev101/recouvrement.git'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+        }
+        stage('Package') {
+            steps {
+                sh 'tar -czf build.tar.gz build/'
+            }
+        }
+        stage('Deploy') {
+             steps {
+                script {
+                     script {
+                        docker.withServer('unix:///var/run/docker.sock') {
+                                docker.build('recover-app:latest')
+                                sh 'docker run -d -p 80:80 --name recover-app --rm recover-app:latest'
+                        }
+                     }
+                }
+             }
+        }
+    }
+}
