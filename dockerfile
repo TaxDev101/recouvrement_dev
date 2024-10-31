@@ -1,5 +1,6 @@
 # Utilisez une image Node.js minimale comme base
-FROM node:23-alpine as builder
+ARG NODE_VERSION=23.0.1
+FROM node:${NODE_VERSION}-alpine as builder
 
 # Set the working directory
 WORKDIR /app
