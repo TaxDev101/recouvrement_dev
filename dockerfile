@@ -1,5 +1,5 @@
 # Utilisez une image Node.js minimale comme base
-ARG NODE_VERSION=23.0.1
+ARG NODE_VERSION=22.10.0
 FROM node:${NODE_VERSION}-alpine as builder
 
 # Set the working directory
